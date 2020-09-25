@@ -1,7 +1,8 @@
 class Calculator {
   constructor(previousOperandTextElement, currentOperandTextElement){
-    this.previousOperandTextElement = previousOperandTextElement;
-    this.currentOperandTextElement = currentOperandTextElement;
+    this.previousOperandTextElement = previousOperandTextElement
+    this.currentOperandTextElement = currentOperandTextElement
+    this.readyToReset = false
     this.clear()
   }
 
@@ -12,7 +13,7 @@ class Calculator {
   }
 
   delete() {
-    this.currentOperandTextElement = this.currentOperand.toString().slice(0, -1)
+    this.currentOperand = this.currentOperand.toString().slice(0, -1)
 
   }
 
@@ -52,6 +53,7 @@ class Calculator {
       default:
         return
     }
+    this.readyToReset = true;
     this.currentOperand = computation
     this.operation = undefined
     this.previousOperand = ''
@@ -80,7 +82,7 @@ class Calculator {
      this.getDisplayNumber(this.currentOperand)
     if (this.operation != null) {
       this.previousOperandTextElement.innerText =
-       `${getDisplayNumber(this.previousOperand)} ${this.operation}`
+       `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
     } else {
       this.previousOperandTextElement.innerText = ''
     }
@@ -104,6 +106,12 @@ const calculator = new Calculator(previousOperandTextElement, currentOperandText
 
 numberButtons.forEach(button => {
   button.addEventListener('click', () => {
+     if (calculator.previousOperand === "" &&
+       calculator.currentOperand !== "" &&
+       calculator.readyToReset) {
+       calculator.currentOperand = "";
+       calculator.readyToReset = false;
+     }
     calculator.appendNumber(button.innerText)
     calculator.updateDisplay()
   })
