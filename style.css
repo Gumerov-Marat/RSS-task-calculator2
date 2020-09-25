@@ -43,7 +43,7 @@ body {
   word-break: break-all;
 }
 
-.output .previous-operand {
+.output .previos-operand {
   color: rgba(255, 255, 255, .75);
   font-size: 1.5rem;
 }
