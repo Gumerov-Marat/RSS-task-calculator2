@@ -22,11 +22,39 @@ class Calculator {
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
+  meow() {
+   let audio = new Audio('./audio/meow.mp3');
+   audio.play();
+   this.isMeow = true;
+   this.operation = `♡ RS School`;
+   this.updateDisplay();
+  }
+
+  chooseSpecial(specOperation) {
+    if (this.currentOperand === '') return
+      switch (specOperation) {
+        case '±':
+          this.currentOperand = this.currentOperand * (-1);
+          break
+        case '√':
+          this.currentOperand = Math.sqrt(this.currentOperand);
+          break
+        case '1/𝒙':
+          this.currentOperand = 1 / this.currentOperand;
+          break
+        case '%':
+          this.currentOperand = (this.previousOperand / 100) * this.currentOperand;
+          break
+        default:
+          return;
+      }
+    this.specOperation = '';
+    this.previousOperand = this.currentOperand;
+  }
+
   chooseOperation(operation) {
     if (this.currentOperand === '') return;
-    if (this.previousOperand !== '' && this.previousOperand !== '') {
-      this.compute();
-    }
+    if (this.currentOperand !== '' && this.previousOperand !== '') this.compute()
     this.operation = operation;
     this.previousOperand = this.currentOperand;
     this.currentOperand = '';
@@ -36,33 +64,30 @@ class Calculator {
     let computation;
     const prev = parseFloat(this.previousOperand);
     const current = parseFloat(this.currentOperand);
-    if (isNaN(prev) || (isNaN(current) && (this.operation != '√'))) return;
-    switch (this.operation) {
-      case '+':
-        computation = prev + current;
-        break
-      case '-':
-        computation = prev - current;
-        break
-      case '*':
-        computation = prev * current;
-        break
-      case '^':
-        computation = Math.pow(prev, current);
-        break
-      case '÷':
-        computation = prev / current;
-        break
-      case '√':
-      computation = Math.sqrt(prev);
-        break
-      default:
-        return;
-    }
+    if (isNaN(prev) || isNaN(current)) return
+
+      switch (this.operation) {
+          case '+':
+            computation = prev + current;
+            break
+          case '-':
+            computation = prev - current;
+            break
+          case '*':
+            computation = prev * current;
+            break
+          case '^':
+            computation = Math.pow(prev, current);
+            break
+          case '÷':
+            computation = prev / current;
+            break
+          default:
+            return;
+      }
     this.readyToReset = true;
     this.currentOperand = computation;
     this.operation = undefined;
-    this.previousOperand = '';
   }
 
   getDisplayNumber(number) {
@@ -70,6 +95,7 @@ class Calculator {
     const integerDigits = parseFloat(stringNumber.split('.')[0])
     const decimalDigits = stringNumber.split('.')[1]
     let integerDisplay
+
     if (isNaN(integerDigits)) {
       integerDisplay = ''
     } else {
@@ -88,9 +114,9 @@ class Calculator {
     this.currentOperandTextElement.innerText =
       this.getDisplayNumber(this.currentOperand)
     if (this.operation != null) {
-      this.previousOperandTextElement.innerText =
-        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
-    } else {
+       this.previousOperandTextElement.innerText =
+         `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+    }else {
       this.previousOperandTextElement.innerText='';
     }
   }
@@ -99,18 +125,19 @@ class Calculator {
 
 const numberButtons = document.querySelectorAll('[data-number]');
 const operationButtons = document.querySelectorAll('[data-operation]');
+const specialButtons = document.querySelectorAll('[data-funс]');
 const equalsButton = document.querySelector('[data-equals]');
 const deleteButton = document.querySelector('[data-delete]');
 const allClearButton = document.querySelector('[data-all-clear]');
 const previousOperandTextElement = document.querySelector('[data-previous-operand]');
 const currentOperandTextElement = document.querySelector('[data-current-operand]');
+const meow = document.querySelector('[data-meow]');
 
 
 const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement)
 
 numberButtons.forEach(button => {
   button.addEventListener("click", () => {
-
     if (calculator.previousOperand === "" &&
       calculator.currentOperand !== "" &&
       calculator.readyToReset) {
@@ -129,6 +156,13 @@ operationButtons.forEach(button => {
   })
 })
 
+specialButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.chooseSpecial(button.innerText);
+    calculator.updateDisplay();
+  })
+})
+
 equalsButton.addEventListener('click', button => {
   calculator.compute();
   calculator.updateDisplay();
@@ -142,4 +176,8 @@ allClearButton.addEventListener('click', button => {
 deleteButton.addEventListener('click', button => {
   calculator.delete();
   calculator.updateDisplay();
+})
+
+meow.addEventListener('click', button => {
+  calculator.meow();
 })
