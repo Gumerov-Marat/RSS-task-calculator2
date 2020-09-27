@@ -68,19 +68,19 @@ class Calculator {
 
       switch (this.operation) {
           case '+':
-            computation = prev + current;
+            computation = +(prev + current).toFixed(2);
             break
           case '-':
-            computation = prev - current;
+            computation = +(prev - current).toFixed(2);
             break
           case '*':
-            computation = prev * current;
+            computation = + (prev * current).toFixed(2);
             break
           case '^':
             computation = Math.pow(prev, current);
             break
           case '÷':
-            computation = prev / current;
+            computation = + (prev / current).toFixed(2);
             break
           default:
             return;
