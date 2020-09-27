@@ -25,9 +25,23 @@ class Calculator {
   meow() {
    let audio = new Audio('./audio/meow.mp3');
    audio.play();
-   this.isMeow = true;
    this.operation = `♡ RS School`;
    this.updateDisplay();
+  }
+
+  findLonger(first, second) {
+    const f = x => ((x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0));
+    let a = f(Math.abs(first));
+    let b = f(Math.abs(second));
+      console.log( a, b);
+    return a > b ? a + 1 : b + 1;
+  }
+
+  errorMessage() {
+    this.currentOperand = ''
+    this.previousOperand = ''
+    this.operation =  `error`;
+    this.updateDisplay();
   }
 
   chooseSpecial(specOperation) {
@@ -37,7 +51,7 @@ class Calculator {
           this.currentOperand = this.currentOperand * (-1);
           break
         case '√':
-          this.currentOperand = Math.sqrt(this.currentOperand);
+          this.currentOperand = this.currentOperand > 0 ? Math.sqrt(this.currentOperand) : this.errorMessage();
           break
         case '1/𝒙':
           this.currentOperand = 1 / this.currentOperand;
@@ -49,7 +63,12 @@ class Calculator {
           return;
       }
     this.specOperation = '';
-    this.previousOperand = this.currentOperand;
+    if (specOperation === '±' && this.operation !== undefined){
+      return
+    } else {
+      this.previousOperand = this.currentOperand;
+    }
+    
   }
 
   chooseOperation(operation) {
@@ -68,19 +87,19 @@ class Calculator {
 
       switch (this.operation) {
           case '+':
-            computation = +(prev + current).toFixed(2);
+            computation = +(prev + current).toFixed(this.findLonger(prev, current));
             break
           case '-':
-            computation = +(prev - current).toFixed(2);
+            computation = +(prev - current).toFixed(this.findLonger(prev, current));
             break
           case '*':
-            computation = + (prev * current).toFixed(2);
+            computation = +(prev * current).toFixed(this.findLonger(prev, current));
             break
           case '^':
             computation = Math.pow(prev, current);
             break
           case '÷':
-            computation = + (prev / current).toFixed(2);
+            computation = +(prev / current).toFixed(this.findLonger(prev, current));
             break
           default:
             return;
@@ -88,6 +107,7 @@ class Calculator {
     this.readyToReset = true;
     this.currentOperand = computation;
     this.operation = undefined;
+    this.previousOperand =''
   }
 
   getDisplayNumber(number) {
